@@ -4,7 +4,7 @@ import'package:todo/home/task_item.dart';
 import 'package:todo/my_theme.dart';
 
 
-class TodoListTab extends StatelessWidget {
+class TaskTabList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

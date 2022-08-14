@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
 import '../my_theme.dart';
 
 class TaskItem extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo/home/settings.dart';
-import 'package:todo/home/todo_list_tab.dart';
+import 'package:todo/home/task_tab_list.dart';
 import 'package:todo/my_theme.dart';
 import 'add_task_bottom_sheet.dart';
 
@@ -33,8 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
             });
           },
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          // showSelectedLabels: false,
+          // showUnselectedLabels: false,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.list),
             label: 'Tasks'),
@@ -54,10 +56,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: tabs[currentIndex],
     );
   }
-  var tabs = [TodoListTab(),SettingsTab()];
+
   void showAddTaskBottomSheet(){
-    showModalBottomSheet(context: context, builder: (buildcontext){
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        context: context, builder: (buildcontext){
       return AddTaskBottomSheet();
     });
   }
+  var tabs = [TaskTabList(),SettingsTab()];
 }
