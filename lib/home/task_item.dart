@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../model/task.dart';
 import '../my_theme.dart';
 
 class TaskItem extends StatelessWidget {
+  Task task;
+  TaskItem({required this.task});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -47,7 +50,7 @@ class TaskItem extends StatelessWidget {
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('this is title',
+                    Text(task.title,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     SizedBox(
@@ -56,7 +59,7 @@ class TaskItem extends StatelessWidget {
                     Row(
                       children: [
                         Icon(Icons.access_time),
-                        Text('10.0Am',
+                        Text(task.description,
                           style: Theme.of(context).textTheme.bodySmall,
                         )
                       ],

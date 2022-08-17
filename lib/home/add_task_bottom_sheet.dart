@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:todo/firebase_utils/firebase_utils.dart';
+import '../model/task.dart';
+
 class AddTaskBottomSheet extends StatefulWidget {
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
@@ -8,7 +10,7 @@ class AddTaskBottomSheet extends StatefulWidget {
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   String title = '';
   String description = '';
-  DateTime date = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   var formKey = GlobalKey<FormState>();
 
   @override
@@ -62,14 +64,22 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             SizedBox(
               height: 12,
             ),
+            Text(
+              'Select Date',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.start,
+            ),
+            SizedBox(
+              height: 12,
+            ),
             InkWell(
               onTap: () {
-                selectDate();
+                chooseDate();
               },
               child: Text(
-                '${date.month}/${date.day}/${date.year}',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.start,
+                '${selectedDate.month}/${selectedDate.day}/${selectedDate.year}',
+                style: TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(
@@ -94,19 +104,79 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     );
   }
 
-  void selectDate() async {
-    var selectDate = await
-    showDatePicker(
+  void chooseDate() async {
+    var chooseDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(Duration(days: 365)));
-    if (selectDate != null) {
-      date=selectDate;
+    if (chooseDate != null) {
+      selectedDate = chooseDate;
       setState(() {});
     }
   }
+
   void addTask() {
-    if (formKey.currentState!.validate()) {}
+    if (formKey.currentState!.validate()) {
+      Task task = Task(
+          title: title,
+          description: description,
+          date: selectedDate.millisecondsSinceEpoch);
+     ShowLoading(context, ' Loading...');
+      addTaskToFirebase(task).timeout(Duration(milliseconds: 5000),onTimeout:()
+      { print('todo was added successfully');
+        showMessage(context, 'Todo was added successfully', 'OK', (context){
+       Navigator.pop(context);
+       Navigator.pop(context);
+        });
+      //   hideLoading(context);
+      // Navigator.pop(context);
+      });
+
+
+
+    }
   }
+
+  void ShowLoading(BuildContext context, String message, {bool isCanceled=false}) {
+    showDialog(
+        barrierDismissible: isCanceled,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Row(
+              children: [CircularProgressIndicator(), Text(message)],
+            ),
+          );
+        });
+  }
+
+  void hideLoading(
+    BuildContext context,
+  ) {
+    Navigator.pop(context);
+  }
+
+  void showMessage(BuildContext context,
+      String message,
+      String posActionText,
+      Function posAction,
+      {String? negActionText = null,
+        Function? negAction = null}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(message),
+            actions: [
+              TextButton(onPressed: (){
+                posAction(context);
+                },
+                  child: Text(posActionText))
+            ],
+          );
+        });
+  }
+
+
 }
