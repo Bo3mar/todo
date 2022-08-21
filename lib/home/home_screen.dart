@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/home/settings.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/home/settings_tab.dart';
 import 'package:todo/home/task_tab_list.dart';
 import 'package:todo/my_theme.dart';
+import '../my_theme.dart';
+import '../provider/settings_provider.dart';
 import 'add_task_bottom_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -17,10 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var settingsProvider=Provider.of<SettingsProvider>(context);
     return Scaffold(
-      backgroundColor: MyThemeData.Background,
+      backgroundColor: settingsProvider.isDarkMode()?MyThemeData.BackgroundDark:MyThemeData.Backgroundlight,
       appBar: AppBar(
-        title: Text('To Do List',),
+        title: Text(AppLocalizations.of(context)!.todolist),
       ),
 
       bottomNavigationBar: BottomAppBar(
@@ -30,19 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: (index){
             currentIndex=index ;
             setState(() {
-
             });
+
           },
+          selectedItemColor: MyThemeData.primaryBluelight,
+          unselectedItemColor: MyThemeData.red ,
           backgroundColor: Colors.transparent,
           elevation: 0,
           // showSelectedLabels: false,
           // showUnselectedLabels: false,
           items: [
+
             BottomNavigationBarItem(icon: Icon(Icons.list),
-            label: 'Tasks'),
+            label: AppLocalizations.of(context)!.tasks),
+
             BottomNavigationBarItem(icon: Icon(Icons.settings),
-            label: 'Settings'),
+            label: AppLocalizations.of(context)!.settings),
+
           ],
+
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -62,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        context: context, builder: (buildcontext){
+        context: context, builder: (buildContext){
       return AddTaskBottomSheet();
     });
   }

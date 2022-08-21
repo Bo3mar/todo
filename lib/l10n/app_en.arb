@@ -1,0 +1,16 @@
+{
+  "todo":"ToDo",
+  "todolist":"ToDo List",
+  "tasks":"Tasks",
+  "settings":"Settings",
+  "light":"Light",
+  "night":"Night",
+  "ar":"Arabic",
+  "en":"English",
+  "lang":"Language",
+  "mode":"Mode",
+  "editTask":"Edit Task",
+  "edit":"Edit",
+  "saveChanges":"Save Changes",
+  "delete":"Delete"
+}

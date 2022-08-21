@@ -1,39 +1,42 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:todo/firebase_utils/firebase_utils.dart';
-import'package:todo/home/task_item.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/home/task_item.dart';
 import 'package:todo/my_theme.dart';
-import '../model/task.dart';
-
+import '../provider/list_provider.dart';
+import '../provider/settings_provider.dart';
 
 class TaskTabList extends StatefulWidget {
-
   @override
   State<TaskTabList> createState() => _TaskTabListState();
 }
 
 class _TaskTabListState extends State<TaskTabList> {
-  List<Task> taskList=[];
+
+late ListProvider listProvider ;
   @override
   Widget build(BuildContext context) {
-    if(taskList.isEmpty){
-    getTaskFromFireStore();}
+    listProvider=Provider.of<ListProvider>(context);
+    if(listProvider.taskList.isEmpty){
+  listProvider.getTaskFromFireStore();
+}
     return Container(
       child: Column(
         children: [
           CalendarTimeline(
-            initialDate: DateTime.now(),
+            initialDate: listProvider.selectedDate,
             firstDate: DateTime.now().subtract(Duration(days: 365)),
             lastDate: DateTime.now().add(Duration(days: 365)),
-            onDateSelected: (date) => print(date),
+            onDateSelected: (date) {
+              listProvider.changeSelectedDate(date);
+            },
             showYears: true,
             leftMargin: 20,
-            monthColor: MyThemeData.primaryBlue,
-            dayColor: MyThemeData.black,
-            activeDayColor: Colors.white,
-            activeBackgroundDayColor: MyThemeData.primaryBlue,
-            dotsColor: Color(0xFF333a47),
+            monthColor: SettingsProvider.currentTheme==ThemeMode.light?MyThemeData.primaryBluelight:MyThemeData.primaryBlueDark,
+            dayColor: SettingsProvider.currentTheme==ThemeMode.light?MyThemeData.black:MyThemeData.white,
+            activeDayColor: SettingsProvider.currentTheme==ThemeMode.light?MyThemeData.white:MyThemeData.black,
+            activeBackgroundDayColor: MyThemeData.primaryBluelight,
+            dotsColor:  const Color(0xFF333a47),
             // selectableDayPredicate: (date) {
             //   return true;
             //   //   return !(date.weekday == DateTime.friday ||date.weekday==DateTime.saturday);
@@ -41,21 +44,16 @@ class _TaskTabListState extends State<TaskTabList> {
             locale: 'en_ISO',
           ),
           Expanded(
-            child: ListView.builder(itemBuilder: (buildContext,index){
-              return TaskItem(task:taskList [index]);
-            },itemCount: taskList.length),
+            child: ListView.builder(
+                itemCount: listProvider.taskList.length,
+                itemBuilder: (context, index) {
+                  return TaskItem(task: listProvider.taskList[index]);
+                }),
           )
         ],
       ),
     );
   }
-  getTaskFromFireStore()async{
-    QuerySnapshot<Task> querySnapshot= await getTaskCollection().get();
-    taskList=querySnapshot.docs.map((doc) {
-       return doc.data();
-    }).toList();
-    setState((){
 
-    });
-  }
+
 }

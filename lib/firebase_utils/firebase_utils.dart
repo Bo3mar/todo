@@ -14,4 +14,7 @@ var docRef=collection.doc();
 task.id=docRef.id; //auto generated
 return docRef.set(task);
 }
+Future<void> deleteTaskFromFireStore(Task task){
+return getTaskCollection().doc(task.id).delete();
+}
 
